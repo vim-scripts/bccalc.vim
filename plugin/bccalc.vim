@@ -7,7 +7,6 @@ vnoremap ;bc "ey:call CalcLines(1)<CR>
 "vnoremap <Leader>bc "ey:call<SID>CalcBC(1)<CR>
 
 "" calculate expression on current line, pick a mapping, or use the Leader
-form
 noremap  ;bc "eyy:call CalcLines(0)<CR>
 "noremap  <Leader>bc "eyy:call<SID>CalcBC(0)<CR>
 
