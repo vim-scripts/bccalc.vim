@@ -1,53 +1,68 @@
-vnoremap ;bc "ey:call CalcBC(1)<CR>
+"" calculate expression entered on command line and give answer, e.g.:
+" :Calculate sin (3) + sin (4) ^ 2
+command! -nargs=+ Calculate echo "<args> = " . Calculate ("<args>")
 
-noremap ;bc "eyy:call CalcBC(0)<CR>
+"" calculate expression from selection, pick a mapping, or use the Leader form
+vnoremap ;bc "ey:call CalcLines(1)<CR>
+"vnoremap <Leader>bc "ey:call<SID>CalcBC(1)<CR>
 
-command! -nargs=+ Calculate echo Calculate (<args>)
+"" calculate expression on current line, pick a mapping, or use the Leader
+form
+noremap  ;bc "eyy:call CalcLines(0)<CR>
+"noremap  <Leader>bc "eyy:call<SID>CalcBC(0)<CR>
 
+" ---------------------------------------------------------------------
+"  Calculate:
+"    clean up an expression, pass it to bc, return answer
 function! Calculate (s)
 
 	let str = a:s
 
 	" remove newlines and trailing spaces
-	let str = substitute (str, "\n", "", "g")
+	let str = substitute (str, "\n",   "", "g")
 	let str = substitute (str, '\s*$', "", "g")
 
-	" if we end with an equal, strip, and remember for output
-	"if str =~ "=$"
-	"	let str = substitute (str, '=$', "", "")
-	"	let has_equal = 1
-	"endif
-
 	" sub common func names for bc equivalent
-	let str = substitute (str, '\csin\s*(', "s (", "")
-	let str = substitute (str, '\ccos\s*(', "c (", "")
-	let str = substitute (str, '\catan\s*(', "a (", "")
-	let str = substitute (str, "\cln\s*(", "l (", "")
+	let str = substitute (str, '\csin\s*(',  's (', 'g')
+	let str = substitute (str, '\ccos\s*(',  'c (', 'g')
+	let str = substitute (str, '\catan\s*(', 'a (', 'g')
+	let str = substitute (str, "\cln\s*(",   'l (', 'g')
+	let str = substitute (str, '\clog\s*(',  'l (', 'g')
+	let str = substitute (str, '\cexp\s*(',  'e (', 'g')
 
-	" exponitiation
-	"let str = substitute (str, '**', '^', "")
+	" alternate exponitiation symbols
+	let str = substitute (str, '\*\*', '^', "g")
+	let str = substitute (str, '`', '^',    "g")
 
 	" escape chars for shell
 	let str = escape (str, '*();&><|')
 
 	let preload = exists ("g:bccalc_preload") ? g:bccalc_preload : ""
 
-	" run bc, strip newline
-	"let answer = substitute (system ("echo " . str . " \| bc -l"), "\n", "", "")
+	" run bc
 	let answer = system ("echo " . str . " \| bc -l " . preload)
+
+	" strip newline
 	let answer = substitute (answer, "\n", "", "")
+
+	" strip trailing 0s in decimals
 	let answer = substitute (answer, '\.\(\d*[1-9]\)0\+', '.\1', "")
 
 	return answer
 endfunction
 
-
-function! CalcBC(vsl)
+" ---------------------------------------------------------------------
+" CalcLines:
+"
+" take expression from lines, either visually selected or the current line, as
+" passed determined by arg vsl, pass to calculate function, echo or past
+" answer after '='
+function! CalcLines(vsl)
 
 	let has_equal = 0
 
 	" remove newlines and trailing spaces
-	let @e = substitute (@e, "\n", "", "g")
+	let @e = substitute (@e, "\n", "",   "g")
 	let @e = substitute (@e, '\s*$', "", "g")
 
 	" if we end with an equal, strip, and remember for output
