@@ -19,7 +19,7 @@ function! CalcBC()
 	let @e = substitute (@e, "\cln\s*(", "l (", "")
 
 	" escape chars for shell
-	let @e = escape (@e, '*();')
+	let @e = escape (@e, '*();&><|')
 
 	" run bc, strip newline
 	let answer = substitute (system ("echo " . @e . " \| bc -l"), "\n", "", "")
