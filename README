@@ -1,0 +1,56 @@
+This is a mirror of http://www.vim.org/scripts/script.php?script_id=219
+
+This scirpt calculates equations using the program 'bc' (found on most linux systems, available for most systems).  Visually select the equation you want to calculate, then hit ;bc - if the selection ends with an '=' sign, the answer will be appended after the equal, otherwise, the answer is echoed as a message. Equations can span multiple lines, and the full bc syntax is probably supported.  Additionally, sin (), cos (), etc, are transformed into the names used by bc (s () c (), etc).
+
+This script was first entered as a tip, but someone pointed out that functions are hard to use when posted as tips, so this makes it easier to download and use.
+
+Here are some example lines:
+
+2 * sqrt (2) =
+
+3 * (2 - 1) + 4.0 ^ 6 =
+
+4 / 3 =
+
+3 +
+   4 -
+      2 * (1 / (3 + 2)) =
+
+define rad (x) {
+  return (x / 180) * 4 * atan (1)
+}
+cos (rad (45)) =
+
+ibase = 2; obase = 2;
+0100 * 0101 = 
+
+Select each of these in turn (continguous non-blank lines, and hit ;bc for each), and this is what you get:
+2 * sqrt (2) = 2.82842712474619009760
+
+3 * (2 - 1) + 4.0 ^ 6 = 4099.000000
+
+4 / 3 = 1.33333333333333333333
+
+3 +
+   4 -
+      2 * (1 / (3 + 2)) = 6.60000000000000000000
+
+define rad (x) {
+  return (x / 180) * 4 * atan (1)
+}
+cos (rad (45)) = .70710678118654752440 
+
+ibase = 2; obase = 2;
+0100 * 0101 = 10100
+
+Chaining is now allowed:
+
+start with this
+
+2 + 3 = 
+;bc
+2 + 3 = 5
+add some more stuff:
+2 + 3 = 5 * 2 = 
+;bc
+2  + 3 = 5 * 2 = 10
