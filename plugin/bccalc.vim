@@ -21,8 +21,11 @@ function! CalcBC()
 	" escape chars for shell
 	let @e = escape (@e, '*();&><|')
 
+	let preload = exists ("g:bccalc_preload") ? g:bccalc_preload : ""
 	" run bc, strip newline
-	let answer = substitute (system ("echo " . @e . " \| bc -l"), "\n", "", "")
+	"let answer = substitute (system ("echo " . @e . " \| bc -l"), "\n", "", "")
+	let answer = system ("echo " . @e . " \| bc -l " . preload)
+	let answer = substitute (answer, "\n", "", "")
 
 	" append answer or echo
 	if has_equal == 1
