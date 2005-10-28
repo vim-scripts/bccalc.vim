@@ -70,6 +70,10 @@ function! CalcLines(vsl)
 		let has_equal = 1
 	endif
 
+	" if there is another equal in the line, assume chained equations, remove
+	" leading ones
+	let @e = substitute (@e, '^.\+=', '', '')
+
 	let answer = Calculate (@e)
 
 	" append answer or echo
